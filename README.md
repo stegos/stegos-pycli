@@ -2,7 +2,7 @@
 
 ## Setup
 
-Requierements:
+Requirements:
 
 * Python 3.7+
 * asyncio
@@ -12,7 +12,7 @@ Its recommended to setup Python virtual environment like this:
 ```bash
 bash> python -m venv ./client
 bash> source ./client/bin/activate
-bash> pip install -U -r requierements.txt
+bash> pip install -U -r requirements.txt
 ```
 
 Provided examples assume we are running 7-node blockchain on `localhost`.
