@@ -121,7 +121,7 @@ class StegosClient:
                 waiting_balance = False
         return resp['balance']
 
-    async def payment_with_confitmation(self, address, amount):
+    async def payment_with_confirmation(self, address, amount):
         req = create_payment(address, amount, self.wallet_key)
         req['id'] = self.next_id()
         await self.send_msg(req)
