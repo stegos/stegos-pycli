@@ -23,4 +23,3 @@ On the first cluster run, nodes will create `api_token.txt` file with encryption
 * stegos.py - Module which defines StegosClient class, implementing Websocket Stegos API
 * balance.py - example get balance script
 * payout.py - create payments to 3 last nodes in the local cluster
-
