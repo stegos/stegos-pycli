@@ -1,4 +1,13 @@
-client
+/client
 api_token.txt
 .vscode
 __pycache__
+.ropeproject
+
+# Dev notes
+
+NOTES.md
+
+# Testing setup
+
+/env

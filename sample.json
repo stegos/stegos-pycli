@@ -1,0 +1,65 @@
+[
+  {
+    "uri": "ws://127.0.0.1:3145",
+    "accounts": {
+      "1": "7fRZ8GTpbqRZkUZgZ9LRuzQmAmhqYcHCshdWTEP64QU5iamaRdM"
+    },
+    "key_password": "xaephohv3Ahphahp",
+    "api_token": "NE8L/DhwVJ+dRnN1277vhQ==",
+    "node_id": "dev-01"
+  },
+  {
+    "uri": "ws://127.0.0.1:3146",
+    "accounts": {
+      "1": "7fXgjQCSUfHG4pQH1atjJtac8LR2ZM8ZCbcaKet8NhRr66Nq1Ru"
+    },
+    "key_password": "Ovai5aeV3imoch6i",
+    "api_token": "NE8L/DhwVJ+dRnN1277vhQ==",
+    "node_id": "dev-02"
+  },
+  {
+    "uri": "ws://127.0.0.1:3147",
+    "accounts": {
+      "1": "7ej7FQUnqM6gxhcHmHKVj1ihyhXb8riHj4G5gFZLeFbXmpwtXf9"
+    },
+    "key_password": "oowa8she7ahf8Ohy",
+    "api_token": "NE8L/DhwVJ+dRnN1277vhQ==",
+    "node_id": "dev-03"
+  },
+  {
+    "uri": "ws://127.0.0.1:3148",
+    "accounts": {
+      "1": "7enib6C5Xm1N1hJUniKuSpJec2voK1Xs3U9uvLboiv159BEtyC4"
+    },
+    "key_password": "aiGaiR9eivaipei1",
+    "api_token": "NE8L/DhwVJ+dRnN1277vhQ==",
+    "node_id": "dev-04"
+  },
+  {
+    "uri": "ws://127.0.0.1:3149",
+    "accounts": {
+      "1": "7faEdpx55iznBzSKLCo1cq7bxaNprm4XkZvxffveyse8w3gd6Cw"
+    },
+    "key_password": "eeVeefeequ1iun7y",
+    "api_token": "NE8L/DhwVJ+dRnN1277vhQ==",
+    "node_id": "dev-05"
+  },
+  {
+    "uri": "ws://127.0.0.1:3150",
+    "accounts": {
+      "1": "7eBL5JkaS9tMg1LoWSbQKMDtL574MDstNbFcgxbJdBgDfcy4yRk"
+    },
+    "key_password": "dev06",
+    "api_token": "NE8L/DhwVJ+dRnN1277vhQ==",
+    "node_id": "dev-06"
+  },
+  {
+    "uri": "ws://127.0.0.1:3151",
+    "accounts": {
+      "1": "7eLHNiyS6qssNNLrskYrV3G7Yade1xdtNQ5HXxao4xXXA1gx5po"
+    },
+    "key_password": "dev07",
+    "api_token": "NE8L/DhwVJ+dRnN1277vhQ==",
+    "node_id": "dev-07"
+  }
+]

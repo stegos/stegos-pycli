@@ -1,3 +1,4 @@
 asyncio
 websockets
 PyCrypto
+prometheus_client
