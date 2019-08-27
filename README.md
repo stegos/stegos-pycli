@@ -2,7 +2,7 @@
 
 ## *Disclaimer*
 
-:bangbang: Code is provided as is and corresponds to API implemmented in Stegos Node for Mainnet Beta (as of Aug 26, 2019).
+:bangbang: Code is provided as is and corresponds to API implemented in Stegos Node for Mainnet Beta (as of Aug 26, 2019).
 
 ## Setup
 
@@ -10,6 +10,10 @@ Requirements:
 
 * Python 3.7+
 * asyncio
+* websockets
+* Prometheus exporter
+* PyCrypto
+
 
 Its recommended to setup Python virtual environment like this:
 
