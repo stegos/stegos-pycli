@@ -123,7 +123,7 @@ class StegosClient:
         while True:
             resp = await self.recv_msg()
             if resp['type'] == 'account_info':
-                return resp['account_address']
+                return resp['account_pkey']
 
     async def create_account(self):
         if self.websocket is None:
