@@ -34,6 +34,7 @@ async def my_app(heap_node, nodes):
         for id in n['accounts'].keys():
             await node01.payment_with_confirmation(my_account, n['accounts'][id], 100_000, comment="Initial payout")
 
+    balance = await node01.get_balance('heap')
     print(f"Node01 balance after payments: {balance}")
 
 if __name__ == '__main__':
