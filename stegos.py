@@ -14,7 +14,6 @@ from Crypto.Cipher import AES
 from Crypto.Util import Counter
 from Crypto import Random
 
-
 key_bytes = 16
 
 SNOWBALL_TIMINGS = prom.Gauge(
@@ -26,7 +25,7 @@ SNOWBALL_COUNTS = prom.Counter('snowball_success_count',
 class StegosClient:
     id = 1
 
-    def __init__(self, node_id='node01', uri='ws://localhost:3145', accounts={}, api_key='', master_key=''):
+    def __init__(self, node_id='node01', uri='ws://localhost:3145', accounts={}, api_key='', master_key='', debug=True):
         """ Create StegosClient object
         Attributes:
             node_id (String): used in the debug logging.infos
@@ -42,7 +41,7 @@ class StegosClient:
         self.master_key = master_key
         self.accounts = accounts
         self.websocket = None
-        self.debug = True
+        self.debug = debug
         self.pending_txs = {}
         self.balance = 0
 
@@ -54,7 +53,7 @@ class StegosClient:
         backoff_timer = 5
         while True:
             try:
-                self.websocket = await websockets.connect(self.uri, ping_timeout=None)
+                self.websocket = await websockets.connect(self.uri, ping_timeout=None, max_size=None, max_queue=128)
                 break
             except Exception as e:
                 logging.info(
@@ -77,13 +76,13 @@ class StegosClient:
         resp = decrypt(self.api_key, base64.b64decode(resp))
         resp = json.loads(resp)
         if resp['type'] == 'balance_changed' or resp['type'] == 'balance_info':
-            self.balance = resp['balance']
+            self.balance = resp['available']
 
         if self.debug:
-            if resp['type'] in ['rollback_micro_block', 'new_micro_block']:
-                pass
+            if resp['type'] in ['micro_block_reverted', 'micro_block_prepared', 'macro_block_committed']:
+                logging.info(f"notification: type={resp['type']}")
             else:
-                if resp['type'] == 'sync_changed':
+                if resp['type'] == 'status_changed':
                     logging.info(
                         f"{self.prefix} In: epoch:{resp['epoch']}, offset:{resp['offset']}, synced:{resp['is_synchronized']}")
                 else:
@@ -94,7 +93,7 @@ class StegosClient:
     async def wait_sync(self):
         while True:
             resp = await self.recv_msg()
-            if resp['type'] == 'sync_changed' and resp['is_synchronized']:
+            if resp['type'] == 'status_changed' and resp['is_synchronized']:
                 logging.info(f"{self.prefix} is synchronized!")
                 break
 
@@ -170,10 +169,7 @@ class StegosClient:
                 break
 
         # Wait for account to be synced
-        while True:
-            resp = await self.recv_msg()
-            if resp['type'] == 'sync_changed':
-                break
+        await self.wait_sync()
 
         return result
 
@@ -194,7 +190,7 @@ class StegosClient:
                 await self.send_msg(req)
                 continue
             if 'id' in resp.keys() and resp['id'] == self.id and 'balance_info' == resp['type']:
-                return resp['balance']
+                return resp['available']
 
     async def payment_with_confirmation(self, source, address, amount, comment='', use_certificate=False):
         """
@@ -257,10 +253,10 @@ class StegosClient:
             }
 
     async def secure_payment_with_confirmation(self, source, address, amount):
-        if self.balance <= amount:
-            print(
-                f"{self.prefix}]{source} balance is too low: balance={self.balance}, amount={amount}")
-            sys.exit(-1)
+        # if self.balance <= amount:
+        #     print(
+        #         f"{self.prefix}]{source} balance is too low: balance={self.balance}, amount={amount}")
+        #     sys.exit(-1)
         start_time = time.monotonic()
         req = {
             "type": "secure_payment",
@@ -323,7 +319,93 @@ class StegosClient:
                 return False
 
             elapsed = time.monotonic() - start_time
+            # if elapsed > 900.0:         # 10 minutes
+            #     logging.error(
+            #         F"Transaction processing took too long: elapsed={elapsed}")
+            #     return False
+
             logging.info(f"{self.prefix} Elapsed: {elapsed}")
+
+    async def validate_certificate(self, utxo, sender, recipient, rvalue):
+        if self.websocket is None:
+            return None
+        req = {
+            "type": "validate_certificate",
+            "utxo": utxo,
+            "spender": sender,
+            "recipient": recipient,
+            "rvalue": rvalue,
+            "id": self.next_id(),
+        }
+        await self.send_msg(req)
+        while True:
+            resp = await self.recv_msg()
+            if resp['type'] == 'error' and resp['id'] == self.id:
+                resp = {
+                    "success": False,
+                    "message": resp['error']
+                }
+                return resp
+
+            if resp['type'] == 'certificate_valid' and resp['id'] == self.id:
+                resp = {
+                    "success": True,
+                    "epoch": resp['epoch'],
+                    "timestamp": resp['timestamp'],
+                    "amount": resp['amount'],
+                    "is_final": resp['is_final']
+                }
+                return resp
+
+            if resp.get('id', None) == self.id:
+                resp = {
+                    "success": False,
+                    "message": f"Unknown response type: {resp['type']}"
+                }
+                return resp
+
+    async def get_status(self):
+        req = {
+            "type": "status_info",
+            "id": self.next_id(),
+        }
+        await self.send_msg(req)
+        while True:
+            resp = await self.recv_msg()
+            if resp.get('id', None) == self.id:
+                resp.pop('id', None)
+                return resp
+
+    async def subscribe_chain(self, epoch=None):
+        if epoch is None:
+            status = await self.get_status()
+            logging.info(f"status = {status}")
+            start_epoch = status['epoch']
+        else:
+            start_epoch = epoch
+
+        req = {
+            "type": "subscribe_chain",
+            "epoch": start_epoch,
+            "offset": 0,
+            "id": self.next_id()
+        }
+        await self.send_msg(req)
+        while True:
+            resp = await self.recv_msg()
+            if resp.get('id', None) == self.id:
+                return
+
+    async def subscribe_status(self):
+        req = {
+            'type': 'subscribe_status',
+            'id': self.next_id(),
+        }
+        await self.send_msg(req)
+        while True:
+            resp = await self.recv_msg()
+            if resp.get('id', None) == self.id and resp['type'] == 'subscribed_status':
+                return
 
 
 def encrypt(key, plaintext):

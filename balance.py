@@ -6,18 +6,20 @@ import stegos
 
 async def my_app():
     node01 = stegos.StegosClient(node_id='node01',
-                                 uri='ws://localhost:3145',
+                                 uri='ws://localhost:3155',
                                  accounts={
-                                     '1': '7fCTXenNEh14D4y2ciiaQm4oGDbw7HcbzhUad8dHkrfLuFitR5D'
+                                     'heap': 'str1np4ndacy0rm8rjfewn67mj37ny0g9wynh3a7jctuetxpe6afgeks4f9cmg'
                                  },
-                                 master_key='dev01',
-                                 api_key='YvjaSV59G9jseRh7+dDEBA==')
+                                 master_key='Oothi2loowu0aixe',
+                                 api_key='a1iBv2rDko8m5R2r5lTv8Q==',
+                                 debug=True)
 
     await node01.connect()
+    await node01.subscribe_status()
 
     print("Waiting for sync!")
     await node01.wait_sync()
-    balance = await node01.get_balance('1')
+    balance = await node01.get_balance('heap')
     print(f"Node01 balance: {balance}")
 
 if __name__ == '__main__':

@@ -20,6 +20,7 @@ async def client_from_node(node):
                                  api_key=node['api_token'])
 
     await client.connect()
+    await client.subscribe_status()
     return client
 
 
@@ -32,7 +33,7 @@ async def my_app(nodes):
         ids = await node.list_accounts()
         print(f"Node0{i+1} has accounts: {ids}")
         if len(ids.keys()) < BOT_ACCOUNTS:
-            for n in range(0, BOT_ACCOUNTS - len(ids.keys())):
+            for _n in range(0, BOT_ACCOUNTS - len(ids.keys())):
                 account_info = await node.create_account()
                 nodes[i]['accounts'][account_info['account_id']
                                      ] = account_info['account_address']

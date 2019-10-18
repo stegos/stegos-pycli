@@ -19,6 +19,7 @@ async def client_from_node(node):
                                  api_key=node['api_token'])
 
     await client.connect()
+    await client.subscribe_status()
     return client
 
 
@@ -41,9 +42,9 @@ if __name__ == '__main__':
     heap = {
         "node_id": "heap",
         "accounts": {
-            "heap": "7f9nY9R4LYwmTuc3oEVhDETx6pq5uMpxYzS7nX4F5jNVn6MTcF1"
+            "heap": "7fYfUtAqcq2MyuuiaVkLmizsdSpqEXwGgYFxz9PPjVNkygo97RG"
         },
-        "key_password": "demo",
+        "key_password": "joghie9fee0Eijoc",
         "api_token": "09DmvBtLXUNnnysvZVBmkg==",
         "uri": "ws://127.0.0.1:3155",
     }

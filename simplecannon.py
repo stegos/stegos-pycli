@@ -21,6 +21,7 @@ async def client_from_node(node):
                                  api_key=node['api_token'])
 
     await client.connect()
+    await client.subscribe_status()
     return client
 
 
@@ -51,6 +52,7 @@ async def my_app(nodes):
         assert balance > 0
 
     for c in clients:
+        c['socket'].wait_sync()
         asyncio.ensure_future(loop_payment(
             c['ws_client'], c['source_id'], c['dest_addr'], 10))
 
