@@ -67,7 +67,7 @@ class StegosClient:
         if self.debug:
             d = json.dumps(msg, indent=2)
             logging.info(f"{self.prefix} Out: {d}")
-        await self.websocket.send(str(base64.standard_b64encode(encrypt(self.api_key, json.dumps(msg))), "utf-8"))
+        await self.websocket.send(str(base64.standard_b64encode(encrypt(self.api_key, json.dumps(msg).encode())), "utf-8"))
 
     async def recv_msg(self):
         if self.websocket is None:

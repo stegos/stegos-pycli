@@ -1,4 +1,5 @@
 /client
+/newcrypto
 api_token.txt
 .vscode
 __pycache__
